@@ -1,14 +1,14 @@
-import math
-import random
+import numpy as np
+import numpy.random
+
+rng = np.random.default_rng()
+
 
 def monte_carlo_definite_integral(f, low, high, n):
-    sum_ = 0
-    sum_sqrd = 0
+    xs = rng.uniform(low, high, n)
+    f_v = np.vectorize(f)
+    ys = f_v(xs)
+    mean = np.mean(ys)
+    std = np.std(ys, ddof=1)
     range_size = high - low
-    for _ in range(n):
-        x = random.uniform(low, high)
-        y = f(x)
-        sum_ += y
-        sum_sqrd += y*y
-    mean = sum_/n
-    return range_size*mean, math.sqrt(range_size*range_size*(sum_sqrd - n*mean*mean)/(n*(n-1)))
+    return range_size*mean, range_size*std/np.sqrt(n-1)
